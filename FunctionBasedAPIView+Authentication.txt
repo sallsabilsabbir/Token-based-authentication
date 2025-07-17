@@ -48,11 +48,6 @@
 
 	'djangorestapi',
 
-##-----------------------------------------------serializer---------------------------------------------->
-[---------------------------------------------------Start------------------------------------------------]
-[----Complex Data] ------ convert to---> [ Native Python Datatype]------convert to ---->[ JSON / XML-----]
-
-##-----------------------------------------------Complex Data create start------------------------------->
 
 11. inside djangorestapi app model.py create model(Complex Data)-->
 
@@ -109,11 +104,7 @@
 				   class AiquestAdmin(admin.ModelAdmin):
 					  list_display = ['id','teacher_name','course_name','course_duration','seat']
 
-##-----------------------------------------------Complex Data create End-------------------------------->
 
-##. Create superuser: python manage.py createsuperuser ------------------------------------------------->
-
-##--------------------------------Convert to Native Python Datatype start------------------------------->
 
 14. Create a serializer in djangorestapi/serializers.py
 
@@ -239,7 +230,6 @@
   path('aicreate/<int:pk>', views.AiquestCreate.as_view(), name='aicreate'),
 
     
-##----------------------------------------------serializer End---------------------------------------------->
 	
 
 16. Create Urls in djangorest/urls.py
@@ -249,7 +239,6 @@
 
 17. Run and Check your API.
 
-##----------------------------------------------------DONE-------------------------------------------------->
 
 ##----------------------------------------API Documenting for Swagger--------------------------------------->
 
