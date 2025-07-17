@@ -105,6 +105,8 @@
 					  list_display = ['id','teacher_name','course_name','course_duration','seat']
 
 
+##. Create superuser: python manage.py createsuperuser ------------------------------------------------->
+
 
 14. Create a serializer in djangorestapi/serializers.py
 
@@ -229,7 +231,7 @@
 	path('aiquest/', views.AiquestCreate.as_view(), name='aiquest'),
   path('aicreate/<int:pk>', views.AiquestCreate.as_view(), name='aicreate'),
 
-    
+
 	
 
 16. Create Urls in djangorest/urls.py
@@ -238,6 +240,102 @@
 
 
 17. Run and Check your API.
+
+##----------------------------------------API Authentication  Documenting--------------------------------------->
+
+# Add to INSTALLED_APPS in settings.py
+	
+		INSTALLED_APPS = [
+    			...
+    			'rest_framework',
+    			'rest_framework.authtoken',
+    			'restApi',
+		]
+
+# Add REST Framework Auth settings below of  settings.py
+
+		REST_FRAMEWORK = {
+    			'DEFAULT_AUTHENTICATION_CLASSES': [
+        		'rest_framework.authentication.TokenAuthentication',
+    			],
+    			'DEFAULT_PERMISSION_CLASSES': [
+        		'rest_framework.permissions.IsAuthenticated',
+    			]
+		}
+
+#  Create View file: restApi/auth_views.py
+	
+	# check all codes inside of auth_views.py
+	
+#  Update urls In mainProject/urls.py:
+	
+	# imports for authentication:
+
+	from restApi.auth_views import register_user, login_user, logout_user, change_password,forgot_password, reset_password_with_otp
+
+	# inside urlpatterns add links for authentication
+
+    	path('register/', register_user),
+    	path('login/', login_user),
+    	path('logout/', logout_user),
+    	path('change-password/', change_password),
+    	path('forgot-password/', forgot_password),
+    	path('reset-password-otp/', reset_password_with_otp),
+
+# in views.py import and add permission classes
+	
+	from rest_framework.permissions import IsAuthenticated
+	from rest_framework.decorators import permission_classes
+
+	
+	@permission_classes([IsAuthenticated])
+
+
+#  Makemigrations, Migrate & Create Superuser
+
+
+#  check those code and match with code check auth_views, settings,models.....
+
+from pathlib import Path
+import os
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'sabbir@abc.com'
+EMAIL_HOST_PASSWORD = 'jrazwbbweqxvrriz'  # this is from email , app password
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+
+
+
+from django.contrib.auth.models import User
+from django.utils import timezone
+import datetime
+
+class PasswordResetOTP(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_valid(self):
+        return timezone.now() < self.created_at + datetime.timedelta(minutes=10)  # 10 min validity
+
+
+
+
+
+
+import random
+from django.core.mail import send_mail
+from .models import PasswordResetOTP
+
+
 
 
 ##----------------------------------------API Documenting for Swagger--------------------------------------->
@@ -258,11 +356,14 @@
 	}
 
 	SPECTACULAR_SETTINGS = {
-	    'TITLE': 'Your Project API',
-	    'DESCRIPTION': 'Your project description',
-	    'VERSION': '1.0.0',
-	    'SERVE_INCLUDE_SCHEMA': False,
-	    # OTHER SETTINGS
+    	'TITLE': 'ProjectOne API ',
+    	'DESCRIPTION': 'API',
+    	'VERSION': '1.0.0',
+    	'SERVE_INCLUDE_SCHEMA': False, 
+    	'SWAGGER_UI_SETTINGS': {
+        	'persistAuthorization': True,  # Keeps token in Swagger UI after login
+    	},
+    	'COMPONENT_SPLIT_REQUEST': True,
 	}
 
 ## in urls.py add:
